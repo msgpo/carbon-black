@@ -2,7 +2,11 @@
     <div class="padding-0-5">
         <p class="padded">
             <a href="{{block.data.details.CBUrl}}">View in Carbon Black <i class="btb bt-external-link"></i></a>
-            <b class="muted">MD5</b>: <b>{{block.entity.value}}</b><br>
+        </p>
+        <p>
+            <b class="muted">MD5</b>: <b>{{block.entity.value}}</b>
+        </p>
+        <p>
             [{{block.data.details.signed}} <i
                 class="fa muted {{if isUnsigned 'fa-unlock' 'fa-lock'}}"></i>]
         </p>
