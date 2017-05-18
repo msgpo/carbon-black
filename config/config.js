@@ -15,11 +15,14 @@ module.exports = {
      * @type String
      * @required
      */
-    "acronym":"CB",
-    "logging": {level: 'trace'},
+    "acronym": "CB",
+    "logging": {level: 'info'},
     "entityTypes": ['hash'],
-    settings:{
-      enforceStrictSSLCheck: true
+    settings: {
+        /**
+         * If true, the integration will allow connections to Carbon Black instances using invalid/untrusted SSL certificates
+         */
+        allowInsecureConnections: true
     },
     /**
      * Description for this integration which is displayed in the Polarity integrations user interface
@@ -35,7 +38,7 @@ module.exports = {
      * @type Array
      * @optional
      */
-    "styles":[
+    "styles": [
         "./styles/carbonblack.less"
     ],
     /**
@@ -61,7 +64,7 @@ module.exports = {
      * @type Array
      * @optional
      */
-    "options":[
+    "options": [
         {
             "key": "url",
             "name": "Carbon Black Instance URL",
