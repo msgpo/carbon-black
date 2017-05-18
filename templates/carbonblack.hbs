@@ -1,0 +1,54 @@
+<div class="notification-body-details-container">
+    <div class="padding-0-5">
+        <p class="padded">
+            <b class="muted">MD5</b>: <a href="{{block.data.details.CBUrl}}"><b>{{block.entity.value}}</b></a>
+            [{{block.data.details.signed}} <i
+                class="bts muted {{if isUnsigned 'bt-lock-open' 'bt-lock'}}"></i>]
+        </p>
+        {{#if block.data.details.alliance_score_virustotal}}
+            <p>
+                <b class="muted">VirusTotal Positives</b>: {{block.data.details.alliance_score_virustotal}} <i
+                    class="fa fa-bug"></i>
+            </p>
+            <p>
+                <a href="{{block.data.details.alliance_link_virustotal}}">View in VirusTotal <i
+                        class="btb bt-external-link"></i></a>
+            </p>
+        {{else}}
+            <p>
+                <b class="muted">No VirusTotal Info</b>
+            </p>
+        {{/if}}
+
+        <p class="padded">
+            <b class="muted">Last Seen</b>: {{moment-time block.data.details.last_seen}}
+        </p>
+        <p class="padded">
+            <b class="muted">Host Count</b>: {{block.data.details.host_count}} <i class="bts bt-desktop muted"></i>
+        </p>
+        <p class="padded">
+            <b class="muted">Publisher</b>: {{block.data.details.company_name}}
+        </p>
+    </div>
+    <table style="margin-top:5px;">
+        <thead>
+        <th>
+            Observed Filenames
+            <span class="table-header-info">
+                  [showing {{numFilePathsShown}} of {{block.data.details.observed_filename.length}}]
+              </span>
+        </th>
+        </thead>
+        <tbody>
+        {{#each (limit block.data.details.observed_filename maxFilePathsToShow) as |filepath|}}
+            <tr>
+                <td>
+                    {{filepath}}
+                </td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+
+</div>
+<div style="clear:both"></div>
