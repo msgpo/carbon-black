@@ -1,9 +1,10 @@
 <div class="notification-body-details-container">
     <div class="padding-0-5">
         <p class="padded">
-            <b class="muted">MD5</b>: <a href="{{block.data.details.CBUrl}}"><b>{{block.entity.value}}</b></a>
+            <a href="{{block.data.details.CBUrl}}">View in Carbon Black <i class="btb bt-external-link"></i></a>
+            <b class="muted">MD5</b>: <b>{{block.entity.value}}</b><br>
             [{{block.data.details.signed}} <i
-                class="bts muted {{if isUnsigned 'bt-lock-open' 'bt-lock'}}"></i>]
+                class="fa muted {{if isUnsigned 'fa-unlock' 'fa-lock'}}"></i>]
         </p>
         {{#if block.data.details.alliance_score_virustotal}}
             <p>
@@ -24,13 +25,13 @@
             <b class="muted">Last Seen</b>: {{moment-time block.data.details.last_seen}}
         </p>
         <p class="padded">
-            <b class="muted">Host Count</b>: {{block.data.details.host_count}} <i class="bts bt-desktop muted"></i>
+            <b class="muted">Host Count</b>: {{block.data.details.host_count}} <i class="fa fa-desktop muted"></i>
         </p>
         <p class="padded">
             <b class="muted">Publisher</b>: {{block.data.details.company_name}}
         </p>
     </div>
-    <table style="margin-top:5px;">
+    <table class="filenames">
         <thead>
         <th>
             Observed Filenames
@@ -49,6 +50,5 @@
         {{/each}}
         </tbody>
     </table>
-
 </div>
 <div style="clear:both"></div>
