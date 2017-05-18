@@ -2,7 +2,8 @@
 
 The Polarity [Carbon Black](https://www.carbonblack.com/) integration allows Polarity to search your Carbon Black deployment for MD5 hashes in real-time.  The integration gives you real-time insight into whether a binary has run on your network.
   
- | ![image](https://cloud.githubusercontent.com/assets/306319/26213496/496615ae-3bc7-11e7-95e4-faad9eb46f66.png) |
+ | ![image](https://cloud.githubusercontent.com/assets/306319/26214359/155e7cee-3bca-11e7-99e9-f873252cd941.png)
+ |
  |---|
  |*Carbon Black Lookup of MD5 Hash* |
 
