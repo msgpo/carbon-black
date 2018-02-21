@@ -2,18 +2,46 @@
 
 let redis = require('redis');
 let request = require('request');
-let _ = require('lodash');
+let fs = require('fs');
 let async = require('async');
 let config = require('./config/config');
 let path = require('path');
 let url = require('url');
 let Logger;
+let requestWithDefaults;
 
 const LOOKUP_BATCH_SIZE = 10;
 const SUMMARY_FILE_DISPLAY_LIMIT = 5;
 
 function startup(logger) {
     Logger = logger;
+    let defaults = {};
+
+    if (typeof config.request.cert === 'string' && config.request.cert.length > 0) {
+        defaults.cert = fs.readFileSync(config.request.cert);
+    }
+
+    if (typeof config.request.key === 'string' && config.request.key.length > 0) {
+        defaults.key = fs.readFileSync(config.request.key);
+    }
+
+    if (typeof config.request.passphrase === 'string' && config.request.passphrase.length > 0) {
+        defaults.passphrase = config.request.passphrase;
+    }
+
+    if (typeof config.request.ca === 'string' && config.request.ca.length > 0) {
+        defaults.ca = fs.readFileSync(config.request.ca);
+    }
+
+    if (typeof config.request.proxy === 'string' && config.request.proxy.length > 0) {
+        defaults.proxy = config.request.proxy;
+    }
+
+    if (typeof config.request.rejectUnauthorized === 'boolean') {
+        defaults.rejectUnauthorized = config.request.rejectUnauthorized;
+    }
+
+    requestWithDefaults = request.defaults(defaults);
 }
 
 function doLookup(entities, options, cb) {
@@ -26,7 +54,7 @@ function doLookup(entities, options, cb) {
     for (let i = 0; i < entities.length; i++) {
         let entityObj = entities[i];
         if (entityObj.isMD5) {
-            if(md5Count !== 0){
+            if (md5Count !== 0) {
                 searchString += " OR ";
             }
             md5Count++;
@@ -70,7 +98,7 @@ function doLookup(entities, options, cb) {
 
 function _lookupHashes(searchString, entityDictionary, entitySet, options, cb) {
     let results = [];
-    request({
+    requestWithDefaults({
         uri: options.url + '/api/v1/binary',
         headers: {
             'X-Auth-Token': options.apiKey
@@ -79,17 +107,26 @@ function _lookupHashes(searchString, entityDictionary, entitySet, options, cb) {
             q: searchString
         },
         method: 'GET',
-        json: true,
-        rejectUnauthorized: config.settings.allowInsecureConnections === true ? false : true
+        json: true
     }, function (err, response, body) {
         if (err) {
-            Logger.error({err:err}, 'Request Error with CarbonBlack');
-            cb(err);
+            Logger.error({err: err}, 'Request Error with CarbonBlack');
+            cb({
+                detail: 'HTTP Request Error Encountered',
+                err:err
+            });
             return;
         }
 
         if (response.statusCode !== 200) {
-            Logger.error({response:response}, 'CarbonBlack REST Error Response Received');
+            Logger.error({response: response}, 'CarbonBlack REST Error Response Received');
+            cb({
+                detail: 'Non 200 HTTP Status Code Received',
+                response:response
+            });
+            return;
+        }
+
         if (!Array.isArray(body.results)) {
             Logger.error({body: body}, 'No results list received from response body');
             cb({
@@ -134,34 +171,34 @@ function _getSummaryTags(data) {
 
     summaryTags.push(data.host_count + ' <i style="font-size: 0.9em" class="fa fa-desktop integration-text-bold-color"></i>');
 
-    if(data.alliance_score_virustotal){
+    if (data.alliance_score_virustotal) {
         summaryTags.push(data.alliance_score_virustotal + ' <i class="fa fa-bug integration-text-bold-color"></i>');
     }
 
-    if(Array.isArray(data.observed_filename)){
+    if (Array.isArray(data.observed_filename)) {
         let numFilesToDisplay = data.observed_filename.length;
-        if(data.observed_filename.length > SUMMARY_FILE_DISPLAY_LIMIT){
+        if (data.observed_filename.length > SUMMARY_FILE_DISPLAY_LIMIT) {
             numFilesToDisplay = SUMMARY_FILE_DISPLAY_LIMIT;
         }
 
-        for(let i=0; i<numFilesToDisplay; i++){
+        for (let i = 0; i < numFilesToDisplay; i++) {
             let filePath = data.observed_filename[i];
             let file;
-            if(data.os_type === 'Windows'){
+            if (data.os_type === 'Windows') {
                 file = path.win32.basename(filePath);
-            }else{
+            } else {
                 file = path.basename(filePath);
             }
 
-            if(data.signed.toLowerCase() === 'unsigned'){
+            if (data.signed.toLowerCase() === 'unsigned') {
                 summaryTags.push('<i class="fa fa-unlock integration-text-bold-color"></i> ' + file);
-            }else{
+            } else {
                 summaryTags.push('<i class="fa fa-lock integration-text-bold-color"></i> ' + file);
             }
         }
         var additionalFilesCount = data.observed_filename.length - SUMMARY_FILE_DISPLAY_LIMIT;
 
-        if(additionalFilesCount > 0){
+        if (additionalFilesCount > 0) {
             summaryTags.push('+' + additionalFilesCount);
         }
     }
