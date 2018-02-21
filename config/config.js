@@ -18,11 +18,25 @@ module.exports = {
     "acronym": "CB",
     "logging": {level: 'info'},
     "entityTypes": ['hash'],
-    settings: {
-        /**
-         * If true, the integration will allow connections to Carbon Black instances using invalid/untrusted SSL certificates
-         */
-        allowInsecureConnections: true
+    request: {
+        // Provide the path to your certFile. Leave an empty string to ignore this option.
+        // Relative paths are relative to the VT integration's root directory
+        cert: '',
+        // Provide the path to your private key. Leave an empty string to ignore this option.
+        // Relative paths are relative to the VT integration's root directory
+        key: '',
+        // Provide the key passphrase if required.  Leave an empty string to ignore this option.
+        // Relative paths are relative to the VT integration's root directory
+        passphrase: '',
+        // Provide the Certificate Authority. Leave an empty string to ignore this option.
+        // Relative paths are relative to the VT integration's root directory
+        ca: '',
+        // An HTTP proxy to be used. Supports proxy Auth with Basic Auth, identical to support for
+        // the url parameter (by embedding the auth info in the uri)
+        proxy: '',
+        // If false, the integration will allow connections to Carbon Black instsances using invalid/untrusted
+        // SSL certificates.
+        rejectUnauthorized: true
     },
     /**
      * Description for this integration which is displayed in the Polarity integrations user interface
