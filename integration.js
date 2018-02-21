@@ -90,7 +90,12 @@ function _lookupHashes(searchString, entityDictionary, entitySet, options, cb) {
 
         if (response.statusCode !== 200) {
             Logger.error({response:response}, 'CarbonBlack REST Error Response Received');
-            cb(body);
+        if (!Array.isArray(body.results)) {
+            Logger.error({body: body}, 'No results list received from response body');
+            cb({
+                detail: 'Unexpected response format: No results list received from response body',
+                body: body
+            });
             return;
         }
 
