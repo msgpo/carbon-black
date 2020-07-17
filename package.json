@@ -6,6 +6,6 @@
   "private": true,
   "dependencies": {
     "async": "2.6.0",
-    "request": "2.83.0"
+    "request": "2.88.0"
   }
 }
